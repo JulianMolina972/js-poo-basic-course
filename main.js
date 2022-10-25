@@ -149,6 +149,67 @@ const david = {
 
 // class
 
+
+function videoPlay(id) {
+  const urlSecret = 'https://platzinauta.com/' + id
+  console.log('is playing from the url' + urlSecret)
+}
+
+function videoStop(id) {
+  const urlSecret = 'https://platzinauta.com/' + id
+  console.log('Pause url' + urlSecret)
+}
+
+
+// export class PlatziClass {
+//   constructor({
+//     name,
+//     videoId,
+//   }) {
+//     this.name = name;
+//     this.videoId = videoId;
+//   }
+
+//   reproduce() { 
+//     videoPlay(this.videoId)
+
+//   }
+
+//   pause() {
+//     videoStop(this.videoId)
+
+//   }
+
+// }
+
+
+
+
+
+class Comment {
+  constructor({
+    content,
+    studentName,
+    studentRole = 'student',
+  }) {
+    this.content = content;
+    this.studentName = studentName;
+    this.studentRole = studentRole;
+    this.likes = 0;
+
+  }
+
+  publish() {
+    console.log(this.studentName + '(' + this.studentRole + ')');
+    console.log(this.likes + ' likes');
+    console.log(this.content);
+  }
+
+
+}
+
+
+
 class Student {
   constructor({
     name, 
@@ -172,16 +233,128 @@ class Student {
     this.approvedCourses = approvedCourses,
     this.learningPaths = learningPaths
   }
+
+  publishComment(commentContent){
+    const comment = new Comment({
+      content: commentContent,
+      studentName: this.name
+    })
+
+    comment.publish();
+  }
+
 }
+
+class FreeStudent extends Student {
+  constructor(props) {
+    super(props);
+  }
+
+  approveCourse(newCourse) {
+    if(newCourse.isFree) {
+      this.approvedCourses.push(newCourse);
+    } else {
+      console.warn('Sorry' + this.name + 'you can only take open courses')
+    }
+
+  }
+}
+
+class BasicStudent extends Student {
+  constructor(props) {
+    super(props);
+
+  }
+
+  approveCourse(newCourse) {
+    if(newCourse.lang !== 'english') {
+      this.approvedCourses.push(newCourse);
+    } else {
+      console.warn('Sorry ' + this.name + ' you cannot take english courses')
+    }
+
+  }
+
+}
+
+class ExpertStudent extends Student {
+  constructor(props) {
+    super(props);
+
+  }
+
+  approveCourse(newCourse) {
+    this.approvedCourses.push(newCourse);
+
+  }
+
+}
+class TeacherStudent extends Student {
+  constructor(props) {
+    super(props);
+
+  }
+
+  approveCourse(newCourse) {
+    this.approvedCourses.push(newCourse);
+
+  }
+
+  publishComment(commentContent){
+    const comment = new Comment({
+      content: commentContent,
+      studentName: this.name,
+      studentRole: 'teacher'
+    })
+
+    comment.publish();
+  }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class Course {
   constructor({
     name,
-    classes = []
+    classes = [],
+    isFree = false,
+    lang = 'spanish',
   }) {
-    this.name = name
+    this._name = name
     this.classes = classes
+    this.isFree = isFree
+    this.lang = lang
   }
+
+  get name() {
+    return this._name;
+  }
+
+  set name(newName) {
+    if (newName === 'bad course') {
+      console.error('Warning')
+    } else {
+      this._name = newName;
+    }
+
+  }
+
 }
 
 class Classes {
@@ -203,8 +376,13 @@ const programmingCourse = new Course({
   name: "Free basic programming course",
   classes: [
     classSoccerPoo
-  ]
+  ],
+  isFree: true,
 })
+
+// programmingCourse.name = ''
+// programmingCourse.changeName('')
+//Free basic programming course
 
 const definitiveHtmlCssCourse = new Course({
   name: "Definitive html and css course",
@@ -217,7 +395,8 @@ const practicalHtmlCssCourse = new Course({
   name: "Practical html and css course",
   classes: [
     classSoccerPoo
-  ]
+  ],
+  lang: 'english'
 })
 
 
@@ -264,7 +443,7 @@ const videoGameSchool = new LearningPath({
 });
 
 
-const julian = new Student({
+const julian = new FreeStudent({
   name: 'Julian Molina',
   username: 'juliandm',
   email: 'julian@mail.com',
@@ -275,11 +454,22 @@ const julian = new Student({
   }
 })
 
-const david = new Student({
+const david = new BasicStudent({
   name: 'david Molina',
   username: 'davidmv',
   email: 'david@mail.com',
   twitter: 'davidmv',
+  learningPaths: {
+    webSchool,
+    videoGameSchool
+  }
+})
+
+const freddy = new TeacherStudent({
+  name: 'Freddy Vega',
+  username: 'freddyv',
+  email: 'freddyv@mail.com',
+  twitter: 'freddyv',
   learningPaths: {
     webSchool,
     videoGameSchool
